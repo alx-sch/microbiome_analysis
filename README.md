@@ -1,9 +1,32 @@
 # microbiome_analysis
 
+- Download genomes:
+  - Mouse: https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000001635.27/
+  - Pathogens:
+    - Helicobacter hepaticus: https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000007905.1/
+    - Staphylococcus aureus: https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000013425.1/
+    - Enterococcus faecalis: https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000393015.1/
+    - Rodentibacter pneumotropicus: https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000730685.1/
+    - Klebsiella oxytoca: https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_003812925.1/
+    - Rodentibacter heylii: https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_010587025.1/
+  
+  - `datasets download genome accession GCF_000007905.1,GCF_000393015.1,GCF_003812925.1,GCF_000013425.1,GCF_000730685.1,GCF_010587025.1 --include genome`
+-> .fna files
 
-download raw reads experimental data:
- `fasterq-dump --outdir /path/to/output_directory --gzip --accession SRX3198644 `
- https://www.ebi.ac.uk/ena/browser/view/SRX3198644
+  - combine pathogen data: `cat GCF_000007905.1_ASM790v1_genomic.fna
+GCF_000393015.1_EntefaecT5V1_genomic.fna GCF_003812925.1_ASM381292v1_genomic.fna
+GCF_000013425.1_ASM1342v1_genomic.fna GCF_000730685.1ASM73068v1_genomic.fna
+GCF_010587025.1_ASM1058702v1_genomic.fna> combined_pathogen_genomes.fna
+`
+
+- index:
+   - `bwa index -p pathogen_combined_index combined_pathogen_genomes.fna`
+   - `bwa index -p mouse_index GCF_000001635.27_GRCm39_genomic.fna` (~18 hours)
+
+- download raw reads experimental data:
+  - https://www.ebi.ac.uk/ena/browser/view/SRX3198644:  `fasterq-dump --outdir . --gzip --accession SRX3198644 `
+  - https://www.ncbi.nlm.nih.gov/sra/SRX22381836[accn]: `fastq-dump --outdir . --gzip --skip-technical --readids --dumpbase --split-files SRR26681942`
+
 
 pipeline:
 1. align reads from exp (feces) to mouse genome
@@ -15,18 +38,70 @@ pipeline:
 
 mouse_index="../1_index/mouse_index"
 pathogen_index="../1_index/pathogen_combined_index"
-input_reads="../3_exp_seq/SRX3198644.fastq"
+input_reads="../2_exp_seq/SRX3198644.fastq"
 
 # Step 1: Align against the mouse genome
 bwa mem -t 4 "$mouse_index" "$input_reads" > aligned_to_mouse.sam
 
-# Step 2: Filter unmapped reads
+# Step 2: Filter unmapped reads and convert to BAM
 samtools view -b -f 4 aligned_to_mouse.sam > unmapped_to_mouse.bam
-# Convert unmapped reads to BAM format explicitly
-samtools view -b unmapped_to_mouse.bam > unmapped_to_mouse.bam
 
-# Step 4: Align unmapped reads against the pathogens
+# Step 3: Align unmapped reads against the pathogens
 bwa mem -t 4 "$pathogen_index" unmapped_to_mouse.bam | samtools view -b - > aligned_to_pathogen.bam
+```
+
+
+```
+#!/bin/bash
+
+mouse_index="../1_index/mouse_index"
+pathogen_index="../1_index/pathogen_combined_index"
+input_dir="../2_exp_fastq/"
+output_dir="../3_alignment/"
+stats_dir="../4_stats/"
+
+# Check if there are any FASTQ files in the input directory
+if [ -z "$(ls -A "$input_dir"/*.fastq)" ]; then
+    echo "No FASTQ files found in $input_dir. Exiting."
+    exit 1
+fi
+
+# Create directories if they don't exist
+mkdir -p "$output_dir"
+mkdir -p "$stats_dir"
+
+for fastq_file in "$input_dir"/*.fastq; do
+    # Extract the file name without extension
+    file_name=$(basename -- "$fastq_file")
+    file_name_no_ext="${file_name%.*}"
+
+    # Create a subdirectory for each sample in the output and stats directories
+    sample_output_dir="$output_dir$file_name_no_ext/"
+    sample_stats_dir="$stats_dir$file_name_no_ext/"
+    mkdir -p "$sample_output_dir"
+    mkdir -p "$sample_stats_dir"
+
+    # Step 1: Align against the mouse genome
+    bwa mem -t 4 "$mouse_index" "$fastq_file" > "$sample_output_dir$file_name_no_ext"_aligned_to_mouse.sam
+
+    # Step 2: Filter unmapped reads and convert to BAM
+    samtools view -b -f 4 "$sample_output_dir$file_name_no_ext"_aligned_to_mouse.sam > "$sample_output_dir$file_name_no_ext"_unmapped_to_mouse.bam
+
+    # Check if there are unmapped reads
+    if [ -s "$sample_output_dir$file_name_no_ext"_unmapped_to_mouse.bam ]; then
+        # Step 3: Align unmapped reads against the pathogens
+        bwa mem -t 4 "$pathogen_index" "$sample_output_dir$file_name_no_ext"_unmapped_to_mouse.bam | samtools view -b - > "$sample_output_dir$file_name_no_ext"_aligned_to_pathogen.bam
+        echo "Alignment against pathogens for $file_name completed in $sample_output_dir."
+
+        # Step 4: Get index statistics for the aligned pathogen BAM file
+        samtools idxstats "$sample_output_dir$file_name_no_ext"_aligned_to_pathogen.bam > "$sample_stats_dir$file_name_no_ext"_pathogen_idxstats.txt
+        echo "Index statistics for $file_name written to $sample_stats_dir."
+    else
+        echo "No unmapped reads to pathogens for $file_name. Skipping pathogen alignment and index stats steps."
+    fi
+done
+
+echo "All samples processed."
 ```
 
 #### BWA (Burrows-Wheeler Aligner):
@@ -48,9 +123,6 @@ Usage in the Script:
   1. Filtering Unmapped Reads:
     - samtools view is used to filter reads based on specific criteria, such as selecting only unmapped reads ( `-f 4 ` flag).
     - The filtered reads are then redirected to a new BAM file (unmapped_to_mouse.bam).
-  2. Converting SAM to BAM:
-    - `samtools view ` is again used, this time to convert a SAM file (unmapped reads) to BAM format.
-    - The result is stored in the same BAM file (unmapped_to_mouse.bam), ensuring it is in BAM format for further processing.
       
 #### Overall Workflow:
 1. Alignment to Mouse Genome:
@@ -66,3 +138,12 @@ Usage in the Script:
 4. Alignment to Pathogens:
    - BWA is used again to align the unmapped reads (now in BAM format) to a combined index for various pathogens, generating a BAM file (aligned_to_pathogen.bam).
 Both BWA and Samtools play crucial roles in the processing and analysis of high-throughput sequencing data, especially in the context of DNA sequence alignment and manipulation.
+
+- 
+
+create index file:
+`samtools index ./4_alignment/aligned_to_pathogen.bam`
+
+then: `samtools idxstats ./4_alignment/aligned_to_pathogen.bam`
+
+
