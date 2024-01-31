@@ -72,25 +72,19 @@ if [ -z "$(ls -A "$input_dir"/*.fastq)" ]; then
     exit 1
 fi
 
-# Create directories if they don't exist
-mkdir -p "$output_dir"
-mkdir -p "$stats_dir"
-
 for fastq_file in "$input_dir"/*.fastq; do
     # Extract the file name without extension
     file_name=$(basename -- "$fastq_file")
     file_name_no_ext="${file_name%.*}"
 
-    # Create a subdirectory for each sample in the output and stats directories
+    # Create a subdirectory for each sample in the output directory
     sample_output_dir="$output_dir$file_name_no_ext/"
-    sample_stats_dir="$stats_dir$file_name_no_ext/"
     mkdir -p "$sample_output_dir"
-    mkdir -p "$sample_stats_dir"
 
     # Step 1: Align against the mouse genome
     bwa mem -t 4 "$mouse_index" "$fastq_file" > "$sample_output_dir$file_name_no_ext"_aligned_to_mouse.sam
 
-    # Step 2: Filter unmapped reads and convert to BAM
+    # Step 2: Filter unmapped reads and convert to BAM (flag: 4 -> unmapped reads)
     samtools view -b -f 4 "$sample_output_dir$file_name_no_ext"_aligned_to_mouse.sam > "$sample_output_dir$file_name_no_ext"_unmapped_to_mouse.bam
 
     # Check if there are unmapped reads
