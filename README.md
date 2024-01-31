@@ -48,6 +48,9 @@ samtools view -b -f 4 aligned_to_mouse.sam > unmapped_to_mouse.bam
 
 # Step 3: Align unmapped reads against the pathogens
 bwa mem -t 4 "$pathogen_index" unmapped_to_mouse.bam | samtools view -b - > aligned_to_pathogen.bam
+
+# Step 4: Generate index statistics for the final BAM file
+samtools idxstats aligned_to_pathogen.bam > aligned_to_pathogen_idxstats.txt
 ```
 
 
