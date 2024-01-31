@@ -24,8 +24,8 @@ GCF_010587025.1_ASM1058702v1_genomic.fna> combined_pathogen_genomes.fna
    - `bwa index -p mouse_index GCF_000001635.27_GRCm39_genomic.fna` (~18 hours)
 
 - download raw reads experimental data:
-  - https://www.ebi.ac.uk/ena/browser/view/SRX3198644:  `fasterq-dump --outdir . --gzip --accession SRX3198644 `
-  - https://www.ncbi.nlm.nih.gov/sra/SRX22381836[accn]: `fastq-dump --outdir . --gzip --skip-technical --readids --dumpbase --split-files SRR26681942`
+  - https://www.ebi.ac.uk/ena/browser/view/SRX3198644:  `fasterq-dump --outdir . --gzip --accession SRX3198644`
+  - https://www.ncbi.nlm.nih.gov/sra/SRX22381836[accn]: `fastq-dump --outdir . --gzip --split-files SRR26681942`
 
 
 pipeline:
