@@ -38,7 +38,7 @@ pipeline:
 
 mouse_index="../1_index/mouse_index"
 pathogen_index="../1_index/pathogen_combined_index"
-input_reads="../2_exp_seq/SRX3198644.fastq"
+input_reads="../2_exp_fastq/SRX3198644.fastq"
 
 # Step 1: Align against the mouse genome
 bwa mem -t 4 "$mouse_index" "$input_reads" > aligned_to_mouse.sam
