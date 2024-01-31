@@ -151,9 +151,4 @@ Both BWA and Samtools play crucial roles in the processing and analysis of high-
 
 - 
 
-create index file:
-`samtools index ./4_alignment/aligned_to_pathogen.bam`
-
-then: `samtools idxstats ./4_alignment/aligned_to_pathogen.bam`
-
 
