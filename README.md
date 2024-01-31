@@ -10,7 +10,7 @@ pipeline:
 2. filter unmapped reads
 3. align those reads to pathogens
 
-```bash
+```bash                                                               
 #!/bin/bash
 
 mouse_index="1_index/mouse_index"
@@ -22,8 +22,10 @@ bwa mem -t 4 "$mouse_index" "$input_reads" > aligned_to_mouse.sam
 
 # Step 2: Filter unmapped reads
 samtools view -b -f 4 aligned_to_mouse.sam > unmapped_to_mouse.bam
+# Convert unmapped reads to BAM format explicitly
+samtools view -b unmapped_to_mouse.bam > unmapped_to_mouse.bam
 
-# Step 3: Align unmapped reads against the pathogens
+# Step 4: Align unmapped reads against the pathogens
 bwa mem -t 4 "$pathogen_index" unmapped_to_mouse.bam | samtools view -b - > aligned_to_pathogen.bam
 ```
 
