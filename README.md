@@ -138,11 +138,6 @@ Usage in the Script:
 3. Conversion to BAM Format:
     - Samtools is used to explicitly convert the BAM file containing unmapped reads to BAM format.
 
-
 4. Alignment to Pathogens:
    - BWA is used again to align the unmapped reads (now in BAM format) to a combined index for various pathogens, generating a BAM file (aligned_to_pathogen.bam).
-Both BWA and Samtools play crucial roles in the processing and analysis of high-throughput sequencing data, especially in the context of DNA sequence alignment and manipulation.
-
-- 
-
 
