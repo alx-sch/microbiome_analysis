@@ -1,4 +1,4 @@
-# microbiome_analysis
+nano # microbiome_analysis
 
 - Download genomes:
   - Mouse: https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000001635.27/
@@ -49,7 +49,10 @@ samtools view -b -f 4 aligned_to_mouse.sam > unmapped_to_mouse.bam
 # Step 3: Align unmapped reads against the pathogens
 bwa mem -t 4 "$pathogen_index" unmapped_to_mouse.bam | samtools view -b - > aligned_to_pathogen.bam
 
-# Step 4: Generate index statistics for the final BAM file
+# Step 4: Generate index for the aligned_to_pathogen.bam file
+samtools index aligned_to_pathogen.bam
+
+# Step 5: Generate index statistics for the final BAM file
 samtools idxstats aligned_to_pathogen.bam > aligned_to_pathogen_idxstats.txt
 ```
 
@@ -96,11 +99,15 @@ for fastq_file in "$input_dir"/*.fastq; do
         bwa mem -t 4 "$pathogen_index" "$sample_output_dir$file_name_no_ext"_unmapped_to_mouse.bam | samtools view -b - > "$sample_output_dir$file_name_no_ext"_aligned_to_pathogen.bam
         echo "Alignment against pathogens for $file_name completed in $sample_output_dir."
 
-        # Step 4: Get index statistics for the aligned pathogen BAM file
+        # Step 4: Create index file for the aligned pathogen BAM
+        samtools index "$sample_output_dir$file_name_no_ext"_aligned_to_pathogen.bam
+        echo "Index file created for $file_name."
+
+        # Step 5: Get index statistics for the aligned pathogen BAM file
         samtools idxstats "$sample_output_dir$file_name_no_ext"_aligned_to_pathogen.bam > "$sample_stats_dir$file_name_no_ext"_pathogen_idxstats.txt
         echo "Index statistics for $file_name written to $sample_stats_dir."
     else
-        echo "No unmapped reads to pathogens for $file_name. Skipping pathogen alignment and index stats steps."
+        echo "No unmapped reads to pathogens for $file_name. Skipping pathogen alignment, index creation, and index stats steps."
     fi
 done
 
