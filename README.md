@@ -133,7 +133,7 @@ total_reads=$(samtools view -c "$output_folder/aligned_to_mouse.sam")
 unmapped_to_mouse_reads=$(samtools view -c -f 4 "$output_folder/aligned_to_mouse.sam")
 
 # Calculate number of reads mapped to pathogens
-mapped_to_pathogen_reads=$(samtools view -c "$output_folder/aligned_to_pathogen_sorted.bam")
+mapped_to_pathogen_reads=$(samtools view -c -F 4 "$output_folder/aligned_to_pathogen_sorted.bam")
 
 # Calculate number of reads not mapped to either
 unmapped_to_either_reads=$((total_reads - (unmapped_to_mouse_reads + mapped_to_pathogen_reads)))
