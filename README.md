@@ -33,8 +33,6 @@ GCF_010587025.1_ASM1058702v1_genomic.fna> combined_pathogen_genomes.fna
     >NC_004917.1 Helicobacter hepaticus ATCC 51449, complete sequence
     CATTAAACCAAGTATAAAATCTATAAATTATCTTTA...
     ```
-
-
 - Indexing:
   - BWA indexing is the process of creating an efficient data structure from a reference genome, allowing the BWA algorithm to rapidly align short DNA sequences during high-throughput sequencing analysis.
    - `bwa index -p pathogen_combined_index combined_pathogen_genomes.fna`
@@ -69,12 +67,69 @@ Download DNA sequencing data from experiments, onbtained from feces; ideally con
       - `seqtk sample -s 42 SRR26681942_2.fastq 0.05 > subset_SRR26681942_2.fastq`
       - '42' is a seed value (making random sampling reproducale), new subsets contain 5% of total reads.
 
-  
+## Aligning Seq Data to Genomes
 
-pipeline:
+Pipeline:
 1. align reads from exp (feces) to mouse genome
 2. filter unmapped reads
 3. align those reads to pathogens
+
+Simple script reading a single FASTQ: aling_filter_simple.sh
+
+```bash  
+#!/bin/bash
+
+mouse_index="../1_index/mouse_index"
+pathogen_index="../1_index/pathogen_combined_index"
+input_reads="../2_exp_fastq/subset_SRR26681942_1.fastq"
+output_folder="subset_SRR26681942_1.fastq"
+
+mkdir -p "$output_folder"
+
+# Step 1: Align against the mouse genome
+echo -e "-----\nStep 1: Aligning against the mouse genome...\n-----"
+bwa mem -t 4 "$mouse_index" "$input_reads" > "$output_folder/aligned_to_mouse.sam"
+echo -e "-----\nStep 1 completed.\n-----"
+
+# Step 2: Filter unmapped reads
+echo -e "-----\nStep 2: Filtering unmapped reads...\n-----"
+samtools view -b -f 4 "$output_folder/aligned_to_mouse.sam" > "$output_folder/unmapped_to_mouse.bam"
+echo "Step 2 completed.\n"
+
+# Step 3: Convert to FASTQ
+echo -e "-----\nStep 3: Conversion to FASTQ...\n-----"
+samtools fastq -n -0 "$output_folder/unmapped_to_mouse.fastq" "$output_folder/unmapped_to_mouse.bam"
+echo -e "-----\nStep 3 completed.\n-----"
+
+# Align unmapped reads against the pathogens
+echo -e "-----\nStep 4: Align against pathogens...\n-----"
+bwa mem -t 4 "$pathogen_index" "$output_folder/unmapped_to_mouse.fastq" > "$output_folder/aligned_to_pathogen.sam"
+echo -e "-----\nStep 4 completed.\n-----"
+
+# Convert SAM to BAM
+echo -e "-----\nStep 5: Converting SAM to BAM...\n-----"
+samtools view -b -o "$output_folder/aligned_to_pathogen.bam" "$output_folder/aligned_to_pathogen.sam"
+echo -e "-----\nStep 5 completed.\n-----"
+
+# Sort BAM file
+echo -e "-----\nStep 6: Sorting BAM file...\n-----"
+samtools sort -o "$output_folder/aligned_to_pathogen_sorted.bam" "$output_folder/aligned_to_pathogen.bam"
+echo -e "-----\nStep 6 completed.\n-----"
+
+# Index the sorted BAM file
+echo -e "-----\nStep 7: Indexing the sorted BAM file...\n-----"
+samtools index "$output_folder/aligned_to_pathogen_sorted.bam"
+echo -e "-----\nStep 7 completed.\n-----"
+
+# Generate index statistics for the final BAM file
+echo -e "-----\nStep 8: Generating index statistics...\n-----"
+samtools idxstats "$output_folder/aligned_to_pathogen_sorted.bam" > "$output_folder/aligned_to_pathogen_idxstats.txt"
+echo -e "-----\nStep 8 completed.\n-----"
+```
+
+
+
+
 
 ```bash                                                               
 #!/bin/bash
@@ -87,7 +142,8 @@ input_reads="../2_exp_fastq/SRX3198644.fastq"
 bwa mem -t 4 "$mouse_index" "$input_reads" > aligned_to_mouse.sam
 
 # Step 2: Filter unmapped reads and convert to BAM
-samtools view -b -f 4 aligned_to_mouse.sam > unmapped_to_mouse.bam
+# samtools view -b aligned_to_mouse.sam | samtools view -U - > unmapped_to_mouse.bam
+samtools view -b-f 4 aligned_to_mouse.sam > unmapped_to_mouse.bam
 
 # Step 3: Align unmapped reads against the pathogens
 bwa mem -t 4 "$pathogen_index" unmapped_to_mouse.bam | samtools view -b - > aligned_to_pathogen.bam
@@ -99,7 +155,7 @@ samtools index aligned_to_pathogen.bam
 samtools idxstats aligned_to_pathogen.bam > aligned_to_pathogen_idxstats.txt
 ```
 
-
+Script, printing 
 ```
 #!/bin/bash
 
