@@ -125,6 +125,30 @@ echo -e "-----\nStep 7 completed.\n-----"
 echo -e "-----\nStep 8: Generating index statistics...\n-----"
 samtools idxstats "$output_folder/aligned_to_pathogen_sorted.bam" > "$output_folder/aligned_to_pathogen_idxstats.txt"
 echo -e "-----\nStep 8 completed.\n-----"
+
+# Calculate total number of reads
+total_reads=$(samtools view -c "$output_folder/aligned_to_mouse.sam")
+
+# Calculate number of reads not mapped to mouse
+unmapped_to_mouse_reads=$(samtools view -c -f 4 "$output_folder/aligned_to_mouse.sam")
+
+# Calculate number of reads mapped to pathogens
+mapped_to_pathogen_reads=$(samtools view -c "$output_folder/aligned_to_pathogen_sorted.bam")
+
+# Calculate number of reads not mapped to either
+unmapped_to_either_reads=$((total_reads - (unmapped_to_mouse_reads + mapped_to_pathogen_reads)))
+
+# Calculate percentages
+percentage_not_mapped_to_mouse=$(awk "BEGIN {printf \"%.2f\", (${unmapped_to_mouse_reads}/${total_reads})*100}")
+percentage_mapped_to_pathogen=$(awk "BEGIN {printf \"%.2f\", (${mapped_to_pathogen_reads}/${total_reads})*100}")
+percentage_not_mapped_to_either=$(awk "BEGIN {printf \"%.2f\", (${unmapped_to_either_reads}/${total_reads})*100}")
+
+# Display results
+echo "Total Reads: $total_reads"
+echo "Reads not mapped to mouse: $unmapped_to_mouse_reads (${percentage_not_mapped_to_mouse}%)"
+echo "Reads mapped to pathogens: $mapped_to_pathogen_reads (${percentage_mapped_to_pathogen}%)"
+echo "Reads not mapped to either: $unmapped_to_either_reads (${percentage_not_mapped_to_either}%)"
+
 ```
 
 
