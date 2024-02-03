@@ -1,10 +1,11 @@
 # Detecting Pathogen DAN in Sequencing Data 
 
 ## System Specification
-- Ubuntu (22.04.01) running on Virtualbox (6.5.0)
-- x86_64 GNU/Linu
-- Disk Space: 100 GB
-- Memory: 5.3 GB
+- **OS:** Ubuntu 22.04.01
+- **Virtualization Platform:** Virtualbox 6.5.0
+- **Architecture:** x86_64 GNU/Linux
+- **Disk Space:**  100 GB
+- **Memory (RAM):**  5.3 GB
 
 ## Reference Genomes
 - Host (Mouse C57BL/6J):
