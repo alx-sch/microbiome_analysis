@@ -81,60 +81,61 @@ Simple script reading a single FASTQ: aling_filter_simple.sh
 
 exp="SRX3198644"
 
-mouse_index="../1_index/mouse_index"
-pathogen_index="../1_index/pathogen_combined_index"
-input_reads="../2_exp_fastq/${exp}.fastq"
+mouse_index="1_index/mouse_index"
+pathogen_index="1_index/pathogen_combined_index"
+input_reads="2_exp_fastq/${exp}.fastq"
 
-mkdir -p "$exp"
+mkdir -p "3_alignment/${exp}"
+mkdir -p "4_stats/${exp}"
 
-# Step 1: Align against the mouse genome
+# Align against the mouse genome
 echo -e "-----\nStep 1: Aligning against the mouse genome...\n-----"
-bwa mem -t 4 "$mouse_index" "$input_reads" > "$exp/$exp_aligned_to_mouse.sam"
+bwa mem -t 4 "$mouse_index" "$input_reads" > "3_alignment/${exp}/${exp}_aligned_to_mouse.sam"
 echo -e "-----\nStep 1 completed.\n-----"
 
-# Step 2: Filter unmapped reads
+# Filter unmapped reads
 echo -e "-----\nStep 2: Filtering unmapped reads...\n-----"
-samtools view -b -f 4 "$exp/$exp_aligned_to_mouse.sam" > "$exp/$exp_unmapped_to_mouse.bam"
+samtools view -b -f 4 "3_alignment/${exp}/${exp}_aligned_to_mouse.sam" > "3_alignment/${exp}/${exp}_unmapped_to_mouse.bam"
 echo "Step 2 completed.\n"
 
-# Step 3: Convert to FASTQ
+# Convert to FASTQ
 echo -e "-----\nStep 3: Conversion to FASTQ...\n-----"
-samtools fastq -n -0 "$exp/$exp_unmapped_to_mouse.fastq" "$exp/$exp_unmapped_to_mouse.bam"
+samtools fastq -n -0 "3_alignment/${exp}/${exp}_unmapped_to_mouse.fastq" "3_alignment/${exp}/${exp}_unmapped_to_mouse.bam"
 echo -e "-----\nStep 3 completed.\n-----"
 
 # Align unmapped reads against the pathogens
 echo -e "-----\nStep 4: Align against pathogens...\n-----"
-bwa mem -t 4 "$pathogen_index" "$exp/$exp_unmapped_to_mouse.fastq" > "$exp/$exp_aligned_to_pathogen.sam"
+bwa mem -t 4 "$pathogen_index" "3_alignment/${exp}/${exp}_unmapped_to_mouse.fastq" > "3_alignment/${exp}/${exp}_aligned_to_pathogen.sam"
 echo -e "-----\nStep 4 completed.\n-----"
 
 # Convert SAM to BAM
 echo -e "-----\nStep 5: Converting SAM to BAM...\n-----"
-samtools view -b -o "$exp/$exp_aligned_to_pathogen.bam" "$exp/$exp_aligned_to_pathogen.sam"
+samtools view -b -o "$3_alignment/${exp}/${exp}_aligned_to_pathogen.bam" "3_alignment/${exp}/${exp}_aligned_to_pathogen.sam"
 echo -e "-----\nStep 5 completed.\n-----"
 
 # Sort BAM file
 echo -e "-----\nStep 6: Sorting BAM file...\n-----"
-samtools sort -o "$exp/$exp_aligned_to_pathogen_sorted.bam" "$exp/$exp_aligned_to_pathogen.bam"
+samtools sort -o "3_alignment/${exp}/${exp}_aligned_to_pathogen_sorted.bam" "3_alignment/${exp}/${exp}_aligned_to_pathogen.bam"
 echo -e "-----\nStep 6 completed.\n-----"
 
 # Index the sorted BAM file
 echo -e "-----\nStep 7: Indexing the sorted BAM file...\n-----"
-samtools index "$exp/$exp_aligned_to_pathogen_sorted.bam"
+samtools index "3_alignment/${exp}/${exp}_aligned_to_pathogen_sorted.bam"
 echo -e "-----\nStep 7 completed.\n-----"
 
 # Generate index statistics for the final BAM file
 echo -e "-----\nStep 8: Generating index statistics...\n-----"
-samtools idxstats "$exp/$exp_aligned_to_pathogen_sorted.bam" > "$exp/$exp_aligned_to_pathogen_idxstats.txt"
+samtools idxstats "3_alignment/${exp}/${exp}_aligned_to_pathogen_sorted.bam" > "4_stats/${exp}/${exp}_aligned_to_pathogen_idxstats.txt"
 echo -e "-----\nStep 8 completed.\n-----"
 
 # Calculate total number of reads (excl. supplementary (flag 2048) and secondary reads (flag 256)).
-total_reads=$(samtools view -c -F 2304 "$exp/$exp_aligned_to_mouse.sam")
+total_reads=$(samtools view -c -F 2304 "3_alignment/${exp}/${exp}_aligned_to_mouse.sam")
 
 # Calculate number of reads not mapped to mouse
-unmapped_to_mouse_reads=$(samtools view -c -f 4 "$exp/$exp_aligned_to_mouse.sam")
+unmapped_to_mouse_reads=$(samtools view -c -f 4 "3_alignment/${exp}/${exp}_aligned_to_mouse.sam")
 
 # Calculate number of reads mapped to pathogens (excl. supplementary (flag 2048) and secondary reads (flag 256) along with unmapped (flag 4))
-mapped_to_pathogen_reads=$(samtools view -c -F 2308 "$exp/$exp_aligned_to_pathogen_sorted.bam")
+mapped_to_pathogen_reads=$(samtools view -c -F 2308 "3_alignment/${exp}/${exp}_aligned_to_pathogen_sorted.bam")
 
 # Calculate number of reads not mapped to mouse or pathogens
 unmapped_to_either_reads=$((unmapped_to_mouse_reads - mapped_to_pathogen_reads))
@@ -152,8 +153,7 @@ echo "Reads mapped to pathogens: $mapped_to_pathogen_reads (${percentage_mapped_
 echo "Reads not mapped to mouse or pathogen: $unmapped_to_either_reads (${percentage_not_mapped_to_either}%)"
 
 # Redirect results to text file
-echo -e "Total Reads: $total_reads (100,00%)\n------\nReads not mapped to mouse: $unmapped_to_mouse_reads (${percentage_not_mapped_to_mouse}%)\nReads mapped to pathogens: $mapped_to_pathogen_reads (${percentage_mapped_to_pathogen}%)\nReads not mapped to mouse or pathogen: $unmapped_to_either_reads (${percentage_not_mapped_to_either}%)" > "$exp/$exp_alignment_results.txt"
-
+echo -e "Total Reads: $total_reads (100,00%)\n------\nReads not mapped to mouse: $unmapped_to_mouse_reads (${percentage_not_mapped_to_mouse}%)\nReads mapped to pathogens: $mapped_to_pathogen_reads (${percentage_mapped_to_pathogen}%)\nReads not mapped to mouse or pathogen: $unmapped_to_either_reads (${percentage_not_mapped_to_either}%)" > "4_stats/${exp}/${exp}_alignment_results.txt"
 ```
 
 
