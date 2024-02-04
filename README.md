@@ -149,7 +149,11 @@ echo "Total Reads: $total_reads (100,00%)"
 echo "------"
 echo "Reads not mapped to mouse: $unmapped_to_mouse_reads (${percentage_not_mapped_to_mouse}%)"
 echo "Reads mapped to pathogens: $mapped_to_pathogen_reads (${percentage_mapped_to_pathogen}%)"
-echo "Reads not mapped to either: $unmapped_to_either_reads (${percentage_not_mapped_to_either}%)"
+echo "Reads not mapped to mouse or pathogen: $unmapped_to_either_reads (${percentage_not_mapped_to_either}%)"
+
+# Redirect results ro text file
+echo -e "Total Reads: $total_reads (100,00%)\n\------\nReads not mapped to mouse: $unmapped_to_mouse_reads (${percentage_not_mapped_to_mouse}%)\nReads mapped to pathogens: $mapped_to_pathogen_reads (${percentage_mapped_to_pathogen}%)\nReads not mapped to mouse or pathogen: $unmapped_to_either_reads (${percentage_not_mapped_to_either}%)
+
 ```
 
 ```bash  
