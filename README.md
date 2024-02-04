@@ -128,16 +128,16 @@ samtools idxstats "$exp/$exp_aligned_to_pathogen_sorted.bam" > "$exp/$exp_aligne
 echo -e "-----\nStep 8 completed.\n-----"
 
 # Calculate total number of reads (excl. supplementary (flag 2048) and secondary reads (flag 256)).
-total_reads=$(samtools view -c -F 2304 "$output_folder/aligned_to_mouse.sam")
+total_reads=$(samtools view -c -F 2304 "$exp/$exp_aligned_to_mouse.sam")
 
 # Calculate number of reads not mapped to mouse
-unmapped_to_mouse_reads=$(samtools view -c -f 4 "$output_folder/aligned_to_mouse.sam")
+unmapped_to_mouse_reads=$(samtools view -c -f 4 "$exp/$exp_aligned_to_mouse.sam")
 
 # Calculate number of reads mapped to pathogens (excl. supplementary (flag 2048) and secondary reads (flag 256) along with unmapped (flag 4))
-mapped_to_pathogen_reads=$(samtools view -c -F 2308 "$output_folder/aligned_to_pathogen_sorted.bam")
+mapped_to_pathogen_reads=$(samtools view -c -F 2308 "$exp/$exp_aligned_to_pathogen_sorted.bam")
 
 # Calculate number of reads not mapped to mouse or pathogens
-unmapped_to_either_reads=$(unmapped_to_mouse_reads - mapped_to_pathogen_reads)
+unmapped_to_either_reads=$((unmapped_to_mouse_reads - mapped_to_pathogen_reads))
 
 # Calculate percentages
 percentage_not_mapped_to_mouse=$(awk "BEGIN {printf \"%.2f\", (${unmapped_to_mouse_reads}/${total_reads})*100}")
@@ -152,7 +152,7 @@ echo "Reads mapped to pathogens: $mapped_to_pathogen_reads (${percentage_mapped_
 echo "Reads not mapped to mouse or pathogen: $unmapped_to_either_reads (${percentage_not_mapped_to_either}%)"
 
 # Redirect results ro text file
-echo -e "Total Reads: $total_reads (100,00%)\n\------\nReads not mapped to mouse: $unmapped_to_mouse_reads (${percentage_not_mapped_to_mouse}%)\nReads mapped to pathogens: $mapped_to_pathogen_reads (${percentage_mapped_to_pathogen}%)\nReads not mapped to mouse or pathogen: $unmapped_to_either_reads (${percentage_not_mapped_to_either}%)
+echo -e "Total Reads: $total_reads (100,00%)\n\------\nReads not mapped to mouse: $unmapped_to_mouse_reads (${percentage_not_mapped_to_mouse}%)\nReads mapped to pathogens: $mapped_to_pathogen_reads (${percentage_mapped_to_pathogen}%)\nReads not mapped to mouse or pathogen: $unmapped_to_either_reads (${percentage_not_mapped_to_either}%)"
 
 ```
 
