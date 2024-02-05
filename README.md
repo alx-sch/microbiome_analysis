@@ -229,3 +229,4 @@ Reads not mapped to mouse: 1105597 (98,99%)
 Reads mapped to pathogens: 23281 (2,08%)
 Reads not mapped to mouse or pathogen: 1082316 (96,90%)
 ```
+- Depending on the experimental setup, skipping alignment against the mouse genome could significantly reduce processing time (it took ~80 min with around 1.1 M reads). The exclusion of this step doesn't result in a substantial increase in host-derived reads, accounting for only about 1% of the total reads in SRR26681942.
