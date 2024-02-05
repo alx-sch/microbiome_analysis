@@ -206,3 +206,26 @@ for fastq_file in "$input_folder"/*.fastq; do
    	- Indexing the sorted BAM file.
 	- Generating index statistics for the final BAM file.
 	- Calculating the number of reads mapped to different categories (mouse, pathogens, neither).
+
+ ## Results
+```
+Total Reads for SRX3198644: 220 (100,00%)
+------
+Reads not mapped to mouse: 193 (87,73%)
+Reads mapped to pathogens: 1 (0,45%)
+Reads not mapped to mouse or pathogen: 192 (87,27%)
+```
+```
+Total Reads for subset_SRR26681942_1: 1116893 (100,00%)
+------
+Reads not mapped to mouse: 1109104 (99,30%)
+Reads mapped to pathogens: 23449 (2,10%)
+Reads not mapped to mouse or pathogen: 1085655 (97,20%)
+```
+```
+Total Reads for subset_SRR26681942_2: 1116893 (100,00%)
+------
+Reads not mapped to mouse: 1105597 (98,99%)
+Reads mapped to pathogens: 23281 (2,08%)
+Reads not mapped to mouse or pathogen: 1082316 (96,90%)
+```
