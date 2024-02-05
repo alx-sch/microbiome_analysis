@@ -69,13 +69,37 @@ Download DNA sequencing data from experiments, onbtained from feces; ideally con
 
 ## Aligning Seq Data to Genomes
 
-Pipeline:
-1. align reads from exp (feces) to mouse genome
-2. filter unmapped reads
-3. align those reads to pathogens
+#### Suggested Directory Structure
 
-Simple script reading a single FASTQ: aling_filter_simple.sh
+- alignments/
+	- run_alignment_all.sh
+	- 0_ref_genome/  
+		- mouse_genome.fna   
+		- pathogen_1_genome.fna
+  		- pathogen_2_genome.fna
+  		- ...
+        - pathogen_combined_genome.fna 	 	
+ 	 - 1_index/
+   		- mouse_index.amb
+     	- mouse_index.ann
+       	- ...
+       	- pathogen_combined_index.amb
+       	- pathogen_combined_index.ann
+       	- ...
+     - 2_exp_fastq/
+       	  -    exp1.fastq
+       	  -    exp2.fastq
+       	  -    ...
+ 
 
+
+#### Pipeline
+- Aligns experimental sequencing data reads to the mouse genome and pathogenic indices.
+- Generates comprehensive statistical reports.
+
+The script iterates over a set of FASTQ files, aligns them to the mouse genome, filters unmapped reads, converts them to FASTQ format, aligns them to a combined pathogen index, and performs various post-processing steps. Finally, it calculates and reports statistics on the alignment results, such as the percentage of reads mapped to the mouse genome, pathogens, and those not mapped to either. The results and statistics are saved in the specified output and stats folders.
+
+run_alignement_all.sh:
 ```bash
 #!/bin/bash
 
@@ -161,37 +185,24 @@ for fastq_file in "$input_folder"/*.fastq; do
 	done
 ```
 
+#### Tools
 
-#### BWA (Burrows-Wheeler Aligner):
-Purpose:
-- BWA is a software package used for aligning short DNA sequences against a large reference genome.
-- It employs the Burrows-Wheeler Transform (BWT) algorithm to efficiently align short reads to a reference sequence.
-
-Usage in the Script:
-- In the script, BWA is used to align the experimental short DNA sequences (reads) against two different reference genomes: the mouse genome and a combined index for various pathogens.
-- The `bwa mem` command is specifically used for DNA sequence alignment using the mem algorithm, suitable for short reads.
+**BWA (Burrows-Wheeler Aligner):**
+- Purpose:
+	- BWA is a software package used for aligning short DNA sequences against a large reference genome.
+	- It employs the Burrows-Wheeler Transform (BWT) algorithm to efficiently align short reads to a reference sequence.
+- Usage in script:
+	- BWA is used to align the experimental short DNA sequences (reads) against two different reference genomes: the mouse genome and a combined index for various pathogens.
+	- The `bwa mem` command is specifically used for DNA sequence alignment using the mem algorithm, suitable for short reads.
+ 	- The alignment results are stored in SAM (Sequence Alignment/Map) format files.
   
-#### Samtools:
-Purpose:
-- Samtools is a suite of programs for interacting with high-throughput sequencing data in SAM (Sequence Alignment/Map) and BAM (Binary Alignment/Map) formats.
-- It provides various utilities for manipulating, viewing, and analyzing sequence alignment data.
-- 
-Usage in the Script:
-- In the script, Samtools is primarily used for two tasks:
-  1. Filtering Unmapped Reads:
-    - samtools view is used to filter reads based on specific criteria, such as selecting only unmapped reads ( `-f 4 ` flag).
-    - The filtered reads are then redirected to a new BAM file (unmapped_to_mouse.bam).
-      
-#### Overall Workflow:
-1. Alignment to Mouse Genome:
-    - BWA is used to align short DNA reads from the experiment to the mouse genome, producing a SAM file (aligned_to_mouse.sam).
-
-2. Filtering Unmapped Reads:
-    - Samtools is employed to filter out unmapped reads from the SAM file, resulting in a new BAM file (unmapped_to_mouse.bam).
-
-3. Conversion to BAM Format:
-    - Samtools is used to explicitly convert the BAM file containing unmapped reads to BAM format.
-
-4. Alignment to Pathogens:
-   - BWA is used again to align the unmapped reads (now in BAM format) to a combined index for various pathogens, generating a BAM file (aligned_to_pathogen.bam).
-
+**Samtools:**
+- Purpose:
+	- Samtools is a suite of programs for interacting with high-throughput sequencing data in SAM (Sequence Alignment/Map) and BAM (Binary Alignment/Map) formats.
+	- It provides various utilities for manipulating, viewing, and analyzing sequence alignment data.
+- Usage in script:
+   	- Filtering unmapped reads from the alignment results.
+   	- Converting SAM to BAM format.
+   	- Indexing the sorted BAM file.
+	- Generating index statistics for the final BAM file.
+	- Calculating the number of reads mapped to different categories (mouse, pathogens, neither).
