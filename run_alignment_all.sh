@@ -74,7 +74,7 @@ for fastq_file in "$input_folder"/*.fastq; do
     	percentage_mapped_to_pathogen=$(awk "BEGIN {printf \"%.2f\", (${mapped_to_pathogen_reads}/${total_reads})*100}")
     	percentage_not_mapped_to_either=$(awk "BEGIN {printf \"%.2f\", (${unmapped_to_either_reads}/${total_reads})*100}")
 
-	# Display and save current report
+	# Display and save report
     	report="Total Reads for ${exp}: $total_reads (100,00%)\n------\nReads not mapped to mouse: $unmapped_to_mouse_reads (${percentage_not_mapped_to_mouse}%)\nReads mapped to pathogens: $mapped_to_pathogen_reads (${percentage_mapped_to_pathogen}%)\nReads not mapped to mouse or pathogen: $unmapped_to_either_reads (${percentage_not_mapped_to_either}%)"
 	echo -e "$report"
 	echo -e "$report" > "$stats_folder/$exp/${exp}_alignment_results.txt"
