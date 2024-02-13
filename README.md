@@ -186,7 +186,7 @@ for fastq_file in "$input_folder"/*.fastq; do
 ```
 
 run_alignement_single.sh:
-```
+```bash
 #!/bin/bash
 
 exp="SRX3198644"
