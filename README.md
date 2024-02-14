@@ -195,6 +195,83 @@ echo "Total: Mapped: $reads_total_mapped ($percentage_total_mapped%) | Unmapped:
 	- Generating index statistics for the final BAM file.
 	- Calculating the number of reads mapped to different categories (mouse, pathogens, neither).
 
+ ## Mapping to Pathogen Names
+
+The idxstats report looks like this, containing multiple reference genomes (18) for the same pathogen (6):
+
+```
+NC_004917.1	1799146	0	0
+NC_007795.1	2821361	0	0
+NZ_KB944666.1	2806553	0	0
+NZ_KB944667.1	4841	0	0
+NZ_KB944668.1	58987	0	0
+NZ_BBIX01000009.1	671026	0	0
+NZ_BBIX01000008.1	854302	0	0
+NZ_BBIX01000007.1	21295	0	0
+NZ_BBIX01000006.1	814831	0	0
+NZ_BBIX01000005.1	18018	0	0
+NZ_BBIX01000004.1	14392	0	0
+NZ_BBIX01000003.1	14977	0	0
+NZ_BBIX01000002.1	11561	0	0
+NZ_BBIX01000001.1	14144	0	0
+NZ_CP033844.1	5864574	1	0
+NZ_CP033845.1	6078	0	0
+NZ_CP033846.1	8424	0	0
+NZ_CP040863.1	2607636	0	0
+*	0	0	0
+```
+
+pathogen_mapping.sh
+```bash
+#!/bin/bash
+
+# Define the input file containing reference genomes
+input_file="0_ref_genome/combined_pathogen_genome.fna"
+# Define the output file
+output_file="pathogen_mapping.txt"
+
+# Declare a dictionary to store the mapping
+declare -A reference_to_pathogen
+
+# Extract reference genome identifiers and corresponding pathogen names
+while IFS= read -r line; do
+    # Extract reference genome identifier and pathogen name
+    identifier=$(echo "$line" | awk -F' ' '{print $1}')
+    pathogen=$(echo "$line" | awk -F' ' '{print $2 "_" $3}')
+    
+    # Store the mapping in the dictionary
+    reference_to_pathogen["$identifier"]="$pathogen"
+done < <(grep ">" "$input_file")
+
+# Write the mapping to the output file
+echo "Reference Genome Identifier	Pathogen Name" > "$output_file"
+for key in "${!reference_to_pathogen[@]}"; do
+    printf "%-30s %s\n" "$key" "${reference_to_pathogen[$key]}" >> "$output_file"
+done
+```
+Dictionary: pathogen_mapping.txt
+```
+Reference Genome Identifier	Pathogen Name
+>NZ_BBIX01000001.1             Rodentibacter_pneumotropicus
+>NZ_BBIX01000007.1             Rodentibacter_pneumotropicus
+>NZ_CP033846.1                 Klebsiella_oxytoca
+>NZ_BBIX01000005.1             Rodentibacter_pneumotropicus
+>NZ_CP040863.1                 Rodentibacter_heylii
+>NZ_BBIX01000004.1             Rodentibacter_pneumotropicus
+>NZ_KB944667.1                 Enterococcus_faecalis
+>NZ_CP033844.1                 Klebsiella_oxytoca
+>NZ_KB944666.1                 Enterococcus_faecalis
+>NZ_BBIX01000008.1             Rodentibacter_pneumotropicus
+>NC_007795.1                   Staphylococcus_aureus
+>NZ_CP033845.1                 Klebsiella_oxytoca
+>NZ_BBIX01000009.1             Rodentibacter_pneumotropicus
+>NZ_KB944668.1                 Enterococcus_faecalis
+>NZ_BBIX01000003.1             Rodentibacter_pneumotropicus
+>NZ_BBIX01000006.1             Rodentibacter_pneumotropicus
+>NZ_BBIX01000002.1             Rodentibacter_pneumotropicus
+>NC_004917.1                   Helicobacter_hepaticus
+```
+
  ## Results
 
 ```
