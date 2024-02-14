@@ -1,4 +1,4 @@
-# Detecting Pathogen DAN in Sequencing Data 
+# Detecting Pathogen DNA in Sequencing Data 
 
 ## System Specification
 - **OS:** Ubuntu 22.04.01
