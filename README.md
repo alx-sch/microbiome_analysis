@@ -183,19 +183,24 @@ while IFS=$'\t' read -r identifier length mapped_reads unmapped_reads; do
     # If the translation exists, use it; otherwise, keep the original identifier
     if [ -n "$translated" ]; then
         (( pathogen_reads["$translated"] += mapped_reads ))
+    else
+        pathogen_reads["$identifier"]="$mapped_reads"   
     fi
 done < "$stats_folder/${exp}_idxstats.txt"
 
 echo -e "-----\nStep 4 completed.\n-----\n"
 
-# Save overview report, 'translated' idxstats result and summed up reads
+pathogen_sorted=("Enterococcus_faecalis" "Helicobacter_hepaticus" "Klebsiella_oxytoca" "Rodentibacter_heylii" "Rodentibacter_p." "Staphylococcus_aureus" "*")
+
+# Write 'translation' and summed up reads into new file
 echo -e "Total reads for ${exp}: $reads_total (100%)\n-----" > "$stats_folder/${exp}_idxstats_processed.txt"
 echo -e "Mouse:\t\t\tMapped: $reads_mouse_mapped ($percentage_mouse_mapped%)\t| Unmapped: $reads_mouse_unmapped ($percentage_mouse_unmapped%)" >> "$stats_folder/${exp}_idxstats_processed.txt"
 echo -e "Pathogen in non-mouse:\tMapped: $reads_pathogen_mapped ($percentage_pathogen_mapped%)\t| Unmapped: $reads_pathogen_unmapped ($percentage_pathogen_unmapped%)" >> "$stats_folder/${exp}_idxstats_processed.txt"
 echo -e "Total:\t\t\tMapped: $reads_total_mapped ($percentage_total_mapped%)\t| Unmapped: $reads_pathogen_unmapped ($percentage_pathogen_unmapped%)" >> "$stats_folder/${exp}_idxstats_processed.txt"
 echo -e "\n###########\n"  >> "$stats_folder/${exp}_idxstats_processed.txt"
-echo -e "Pathogen name\t\tMapped reads\t(% pathogen mapped | % of total non-mouse) \n-----" >> "$stats_folder/${exp}_idxstats_processed.txt"
-for pathogen in "${!pathogen_reads[@]}"; do
+echo -e "Pathogen name\t\tMapped reads\t(% pathogen | % non-mouse) \n-----" >> "$stats_folder/${exp}_idxstats_processed.txt"
+
+for pathogen in "${pathogen_sorted[@]}"; do
     percentage_mapped=$(awk "BEGIN {printf \"%.2f\", (${pathogen_reads[$pathogen]}/$reads_pathogen_mapped)*100}")
     percentage_unmapped=$(awk "BEGIN {printf \"%.2f\", (${pathogen_reads[$pathogen]}/$reads_pathogen_unmapped)*100}")
     echo -e "$pathogen\t\t${pathogen_reads[$pathogen]}\t(${percentage_mapped}%\t| ${percentage_unmapped}%)" >> "$stats_folder/${exp}_idxstats_processed.txt"
