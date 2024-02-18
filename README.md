@@ -309,11 +309,23 @@ Reference Genome Identifier	Pathogen Name
  ## Results
 
 ```
-Total Reads for subset_SRR26681942_1: 1116894 (100,00%)
-------
-Mouse: Mapped: 7790 (0,70%) | Unmapped: 1109104 (99,30%) 
-Pathogen in non-mouse reads: Mapped: 23449 (2,10%) | Unmapped: 1085655 (97,20%)
-Total: Mapped 31239 (2,80%) | Unmapped: 1085655 (97,20%)
+Total reads for subset_SRR26681942_1: 1116893 (100%)
+-----
+Mouse:			Mapped: 7789 (0,70%)	| Unmapped: 1109104 (99,30%)
+Pathogen in non-mouse:	Mapped: 23449 (2,10%)	| Unmapped: 1085655 (97,20%)
+Total:			Mapped: 31238 (2,80%)	| Unmapped: 1085655 (97,20%)
+
+###########
+
+Pathogen name		Mapped reads	(% pathogen | % non-mouse) 
+-----
+Enterococcus_faecalis		12557	(53,55%	| 1,16%)
+Helicobacter_hepaticus		2038	(8,69%	| 0,19%)
+Klebsiella_oxytoca		273	(1,16%	| 0,03%)
+Rodentibacter_heylii		188	(0,80%	| 0,02%)
+Rodentibacter_p.		213	(0,91%	| 0,02%)
+Staphylococcus_aureus		8455	(36,06%	| 0,78%)
+*		0	(0,00%	| 0,00%)
 ```
 
 - Depending on the experimental setup, skipping alignment against the mouse genome could significantly reduce processing time (it took ~80 min with around 1.1 M reads). The exclusion of this step doesn't result in a substantial increase in host-derived reads, accounting for only about 1% of the total reads in SRR26681942.
