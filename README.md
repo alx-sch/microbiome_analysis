@@ -307,7 +307,23 @@ Reference Genome Identifier	Pathogen Name
 ```
  ## [Quack FASTQ QC](https://github.com/IGBB/quack)
 
-`quack -1 2_exp_fastq/F1_S4_R1.fastq -2 2_exp_fastq/F1_S4_R2.fastq -n test`
+```bash
+#!/bin/bash
+
+SAMPLE_NAME="F11_S4"
+
+INPUT_DIR="2_exp_fastq"
+OUTPUT_DIR="4_stats"
+OUTPUT_SAMPLE_DIR="$OUTPUT_DIR/$SAMPLE_NAME/"
+
+# Ensure the output directory exists
+mkdir -p "$OUTPUT_SAMPLE_DIR"
+
+# Run Quack on the FastQ files
+quack -1 "$INPUT_DIR/${SAMPLE_NAME}_R1.fastq.gz" -2 "$INPUT_DIR/${SAMPLE_NAME}_R2.fastq.gz" -n $SAMPLE_NAME > $OUTPUT_SAMPLE_DIR/${SAMPLE_NAME}.svg
+
+echo -e "FASTQ QC for ${SAMPLE_NAME} done..."
+```
 
  ## Results
 
