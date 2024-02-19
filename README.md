@@ -71,58 +71,68 @@ Download DNA sequencing data from experiments, onbtained from feces; ideally con
 
 #### Suggested Directory Structure
 
-- alignments/
-	- run_alignment_all.sh
+- microbiome_analysis/
+	- run.sh
+	- utils/
+  		- quack/
+    		- quack_qc.sh
+      		- pathogen_mapping.sh 
 	- 0_ref_genome/  
 		- mouse_genome.fna   
 		- pathogen_1_genome.fna
   		- pathogen_2_genome.fna
   		- ...
-        - pathogen_combined_genome.fna 	 	
- 	 - 1_index/
+        	- pathogen_combined_genome.fna 	 	
+	- 1_index/
    		- mouse_index.amb
-     	- mouse_index.ann
-       	- ...
-       	- pathogen_combined_index.amb
-       	- pathogen_combined_index.ann
-       	- ...
-     - 2_exp_fastq/
-       	  -    exp1.fastq
-       	  -    exp2.fastq
+	     	- mouse_index.ann
+	       	- ...
+	       	- pathogen_combined_index.amb
+	       	- pathogen_combined_index.ann
+	       	- ...
+	- 2_exp_fastq/
+       	  -    F1_S4_R1.fastq.gz
+       	  -    F1_S4_R2.fastq.gz
        	  -    ...
  
-
-
 #### Pipeline
-- Aligns experimental sequencing data reads to the mouse genome and pathogenic indices.
-- Generates comprehensive statistical reports.
+- **Mapping:** Maps genomic sequence identifiers (at times several per pathogen) to pathogen names.
+- **FASTQ QC:** Performs quality assurance utilizing [quack]((https://github.com/IGBB/quack).
+- **Reporting:** Generates a summary report on host/pathogen mapped/unmapped reads.
 
 The script iterates over a set of FASTQ files, aligns them to the mouse genome, filters unmapped reads, converts them to FASTQ format, aligns them to a combined pathogen index, and performs various post-processing steps. Finally, it calculates and reports statistics on the alignment results, such as the percentage of reads mapped to the mouse genome, pathogens, and those not mapped to either. The results and statistics are saved in the specified output and stats folders.
 
-run_mapping.sh (single FASTQ file):
+run.sh (paired-end reads):
 ```bash
 #!/bin/bash
 
-exp="F1_S4_R1"
+exp="F1_S4"
+
+R1="${exp}_R1"
+R2="${exp}_R2"
 
 mouse_index="1_index/mouse_index"
 pathogen_index="1_index/pathogen_combined_index"
 input_folder="2_exp_fastq"
 output_folder="3_alignment/$exp"
 stats_folder="4_stats/$exp"
-input_reads="$input_folder/${exp}.fastq.gz"
+input_reads1="$input_folder/${R1}.fastq.gz"
+input_reads2="$input_folder/${R2}.fastq.gz"
 
 mkdir -p "$output_folder"
 mkdir -p "$stats_folder"
 
-# Check if mapping file exists
+# Check if mapping file exists. If not, create mapping file
 if [ ! -f "4_stats/pathogen_mapping.txt" ]; then
-    bash pathogen_mapping.sh
+    bash "utils/pathogen_mapping.sh"
 fi
+
+# Execute quack FASTQ QC
+bash utils/quack_qc.sh ${exp}
 
 # Align against the mouse genome
 echo -e "-----\n${exp} / Step 1: Aligning reads against the mouse genome...\n-----"
-bwa mem -t 4 "$mouse_index" "$input_reads" | samtools view -b -f 4 -U "$output_folder/${exp}_mouse_mapped.bam" - > "$output_folder/${exp}_mouse_unmapped.bam"
+bwa mem -t 4 "$mouse_index" "$input_reads1" "$input_reads2" | samtools view -b -f 4 -U "$output_folder/${exp}_mouse_mapped.bam" - > "$output_folder/${exp}_mouse_unmapped.bam"
 echo -e "-----\nStep 1 completed.\n-----"
 
 # Align unmapped-to-mouse reads against pathogens
@@ -209,9 +219,10 @@ for pathogen in "${pathogen_sorted[@]}"; do
     percentage_mapped=$(awk "BEGIN {printf \"%.2f\", (${pathogen_reads[$pathogen]}/$reads_pathogen_mapped)*100}")
     percentage_unmapped=$(awk "BEGIN {printf \"%.2f\", (${pathogen_reads[$pathogen]}/$reads_mouse_unmapped)*100}")
     echo -e "$pathogen\t\t${pathogen_reads[$pathogen]}\t(${percentage_mapped}%\t| ${percentage_unmapped}%)" >> "$stats_folder/${exp}_summary.txt"
+done
 ```
 
-#### Tools
+## Tools
 
 **BWA (Burrows-Wheeler Aligner):**
 - Purpose:
@@ -233,8 +244,7 @@ for pathogen in "${pathogen_sorted[@]}"; do
 	- Generating index statistics for the final BAM file.
 	- Calculating the number of reads mapped to different categories (mouse, pathogens, neither).
 
- ## Mapping to Pathogen Names
-
+## Mapping to Pathogen Names
 The idxstats report looks like this, containing multiple reference genomes (18) for the same pathogen (6):
 
 ```
@@ -263,10 +273,10 @@ pathogen_mapping.sh
 ```bash
 #!/bin/bash
 
-# Define the input file containing reference genomes
 input_file="0_ref_genome/combined_pathogen_genome.fna"
-# Define the output file
-output_file="pathogen_mapping.txt"
+output_file="4_stats/pathogen_mapping.txt"
+
+mkdir -p "4_stats"
 
 # Declare a dictionary to store the mapping
 declare -A reference_to_pathogen
@@ -280,12 +290,15 @@ while IFS= read -r line; do
     reference_to_pathogen["$identifier"]="$pathogen"
 done < <(grep ">" "$input_file")
 
-# Write the mapping to output file (for checking)
+# Write the mapping to output file
 echo "Reference Genome Identifier	Pathogen Name" > "$output_file"
+echo -e "Mapping file created..."
 for key in "${!reference_to_pathogen[@]}"; do
-    printf "%-30s %s\n" "$key" "${reference_to_pathogen[$key]}" >> "$output_file"
+    cleaned_key="${key#>}"
+    printf "%-30s %s\n" "$cleaned_key" "${reference_to_pathogen[$key]}" >> "$output_file"
 done
 ```
+
 Dictionary: pathogen_mapping.txt
 ```
 Reference Genome Identifier	Pathogen Name
@@ -308,17 +321,21 @@ Reference Genome Identifier	Pathogen Name
 >NZ_BBIX01000002.1             Rodentibacter_pneumotropicus
 >NC_004917.1                   Helicobacter_hepaticus
 ```
+
  ## [Quack FASTQ QC](https://github.com/IGBB/quack)
 
 quack_qc.sh
 ```bash
 #!/bin/bash
 
-SAMPLE_NAME="F11_S14"
+SAMPLE_NAME="$1"
 
 INPUT_DIR="2_exp_fastq"
 OUTPUT_DIR="4_stats"
 OUTPUT_SAMPLE_DIR="$OUTPUT_DIR/$SAMPLE_NAME/"
+
+# add directory to PATH environment
+export PATH="utils/quack/:$PATH"
 
 # Ensure the output directory exists
 mkdir -p "$OUTPUT_SAMPLE_DIR"
