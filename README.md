@@ -307,6 +307,7 @@ Reference Genome Identifier	Pathogen Name
 ```
  ## [Quack FASTQ QC](https://github.com/IGBB/quack)
 
+quack_qc.sh
 ```bash
 #!/bin/bash
 
