@@ -221,6 +221,21 @@ for pathogen in "${pathogen_sorted[@]}"; do
     echo -e "$pathogen\t\t${pathogen_reads[$pathogen]}\t(${percentage_mapped}%\t| ${percentage_unmapped}%)" >> "$stats_folder/${exp}_summary.txt"
 done
 ```
+```
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 526316 sequences (40000016 bp)...
+[M::process] read 526316 sequences (40000016 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 273, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (147, 202, 266)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (1, 504)
+[M::mem_pestat] mean and std.dev: (207.31, 101.05)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 623)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 526316 reads in 1906.658 CPU sec, 548.703 real sec
+```
 
 ## Tools
 
