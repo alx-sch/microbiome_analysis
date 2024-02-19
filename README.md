@@ -305,6 +305,9 @@ Reference Genome Identifier	Pathogen Name
 >NZ_BBIX01000002.1             Rodentibacter_pneumotropicus
 >NC_004917.1                   Helicobacter_hepaticus
 ```
+ ## Quack FASTQ QC
+
+`quack -1 2_exp_fastq/F1_S4_R1.fastq -2 2_exp_fastq/F1_S4_R2.fastq -n test`
 
  ## Results
 
