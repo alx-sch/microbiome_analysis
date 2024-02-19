@@ -103,17 +103,22 @@ run_mapping.sh (single FASTQ file):
 ```bash
 #!/bin/bash
 
-exp="SRX3198644"
+exp="F1_S4_R1"
 
 mouse_index="1_index/mouse_index"
 pathogen_index="1_index/pathogen_combined_index"
 input_folder="2_exp_fastq"
 output_folder="3_alignment/$exp"
 stats_folder="4_stats/$exp"
-input_reads="$input_folder/${exp}.fastq"
+input_reads="$input_folder/${exp}.fastq.gz"
 
 mkdir -p "$output_folder"
 mkdir -p "$stats_folder"
+
+# Check if mapping file exists
+if [ ! -f "4_stats/pathogen_mapping.txt" ]; then
+    bash pathogen_mapping.sh
+fi
 
 # Align against the mouse genome
 echo -e "-----\n${exp} / Step 1: Aligning reads against the mouse genome...\n-----"
@@ -190,22 +195,20 @@ done < "$stats_folder/${exp}_idxstats.txt"
 
 echo -e "-----\nStep 4 completed.\n-----\n"
 
-pathogen_sorted=("Enterococcus_faecalis" "Helicobacter_hepaticus" "Klebsiella_oxytoca" "Rodentibacter_heylii" "Rodentibacter_p." "Staphylococcus_aureus" "*")
+pathogen_sorted=("Enterococcus_faecalis" "Helicobacter_hepaticus" "Klebsiella_oxytoca" "Rodentibacter_heylii" "Rodentibacter_pneumotropicus" "Staphylococcus_aureus" "*")
 
 # Write 'translation' and summed up reads into new file
-echo -e "Total reads for ${exp}: $reads_total (100%)\n-----" > "$stats_folder/${exp}_idxstats_processed.txt"
-echo -e "Mouse:\t\t\tMapped: $reads_mouse_mapped ($percentage_mouse_mapped%)\t| Unmapped: $reads_mouse_unmapped ($percentage_mouse_unmapped%)" >> "$stats_folder/${exp}_idxstats_processed.txt"
-echo -e "Pathogen in non-mouse:\tMapped: $reads_pathogen_mapped ($percentage_pathogen_mapped%)\t| Unmapped: $reads_pathogen_unmapped ($percentage_pathogen_unmapped%)" >> "$stats_folder/${exp}_idxstats_processed.txt"
-echo -e "Total:\t\t\tMapped: $reads_total_mapped ($percentage_total_mapped%)\t| Unmapped: $reads_pathogen_unmapped ($percentage_pathogen_unmapped%)" >> "$stats_folder/${exp}_idxstats_processed.txt"
-echo -e "\n###########\n"  >> "$stats_folder/${exp}_idxstats_processed.txt"
-echo -e "Pathogen name\t\tMapped reads\t(% pathogen | % non-mouse) \n-----" >> "$stats_folder/${exp}_idxstats_processed.txt"
+echo -e "Total reads for ${exp}: $reads_total (100%)\n-----" > "$stats_folder/${exp}_summary.txt"
+echo -e "Mouse:\t\t\tMapped: $reads_mouse_mapped ($percentage_mouse_mapped%)\t| Unmapped: $reads_mouse_unmapped ($percentage_mouse_unmapped%)" >> "$stats_folder/${exp}_summary.txt"
+echo -e "Pathogen in non-mouse:\tMapped: $reads_pathogen_mapped ($percentage_pathogen_mapped%)\t| Unmapped: $reads_pathogen_unmapped ($percentage_pathogen_unmapped%)" >> "$stats_folder/${exp}_summary.txt"
+echo -e "Total:\t\t\tMapped: $reads_total_mapped ($percentage_total_mapped%)\t| Unmapped: $reads_pathogen_unmapped ($percentage_pathogen_unmapped%)" >> "$stats_folder/${exp}_summary.txt"
+echo -e "\n###########\n"  >> "$stats_folder/${exp}_summary.txt"
+echo -e "Pathogen name\t\tMapped reads\t(% pathogen | % non-mouse) \n-----" >> "$stats_folder/${exp}_summary.txt"
 
 for pathogen in "${pathogen_sorted[@]}"; do
     percentage_mapped=$(awk "BEGIN {printf \"%.2f\", (${pathogen_reads[$pathogen]}/$reads_pathogen_mapped)*100}")
-    percentage_unmapped=$(awk "BEGIN {printf \"%.2f\", (${pathogen_reads[$pathogen]}/$reads_pathogen_unmapped)*100}")
-    echo -e "$pathogen\t\t${pathogen_reads[$pathogen]}\t(${percentage_mapped}%\t| ${percentage_unmapped}%)" >> "$stats_folder/${exp}_idxstats_processed.txt"
- 
-done
+    percentage_unmapped=$(awk "BEGIN {printf \"%.2f\", (${pathogen_reads[$pathogen]}/$reads_mouse_unmapped)*100}")
+    echo -e "$pathogen\t\t${pathogen_reads[$pathogen]}\t(${percentage_mapped}%\t| ${percentage_unmapped}%)" >> "$stats_folder/${exp}_summary.txt"
 ```
 
 #### Tools
