@@ -1,0 +1,17 @@
+Total reads for F11_S14: 5661678 (100%)
+-----
+Mouse:			Mapped: 385450 (6,81%)	| Unmapped: 5276228 (93,19%)
+Pathogen in non-mouse:	Mapped: 19516 (0,34%)	| Unmapped: 5256712 (92,85%)
+Total:			Mapped: 404966 (7,15%)	| Unmapped: 5256712 (92,85%)
+
+###########
+
+Pathogen name		Mapped reads	(% pathogen | % non-mouse) 
+-----
+Enterococcus_faecalis		3134	(16,06%	| 0,06%)
+Helicobacter_hepaticus		542	(2,78%	| 0,01%)
+Klebsiella_oxytoca		4473	(22,92%	| 0,08%)
+Rodentibacter_heylii		1109	(5,68%	| 0,02%)
+Rodentibacter_pneumotropicus		1001	(5,13%	| 0,02%)
+Staphylococcus_aureus		9259	(47,44%	| 0,18%)
+*		0	(0,00%	| 0,00%)
