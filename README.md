@@ -72,7 +72,7 @@ Paired-end FASTQ files are provided by the client.
 
 ## Trimming / Filtering
 
-#### F1_S4
+#### via 'fastp':
 
  ```bash
  fastp -i F1_S4_R1.fastq.gz -I F1_S4_R2.fastq.gz -o F1_S4_TRIMMED_R1.fastq.gz -O F1_S4_TRIMMED_R2.fastq.gz -h F1_S4_fastp_report.html
