@@ -1,0 +1,19 @@
+Reference Genome Identifier	Pathogen Name
+NZ_BBIX01000001.1              Rodentibacter_pneumotropicus
+NZ_BBIX01000007.1              Rodentibacter_pneumotropicus
+NZ_CP033846.1                  Klebsiella_oxytoca
+NZ_BBIX01000005.1              Rodentibacter_pneumotropicus
+NZ_CP040863.1                  Rodentibacter_heylii
+NZ_BBIX01000004.1              Rodentibacter_pneumotropicus
+NZ_KB944667.1                  Enterococcus_faecalis
+NZ_CP033844.1                  Klebsiella_oxytoca
+NZ_KB944666.1                  Enterococcus_faecalis
+NZ_BBIX01000008.1              Rodentibacter_pneumotropicus
+NC_007795.1                    Staphylococcus_aureus
+NZ_CP033845.1                  Klebsiella_oxytoca
+NZ_BBIX01000009.1              Rodentibacter_pneumotropicus
+NZ_KB944668.1                  Enterococcus_faecalis
+NZ_BBIX01000003.1              Rodentibacter_pneumotropicus
+NZ_BBIX01000006.1              Rodentibacter_pneumotropicus
+NZ_BBIX01000002.1              Rodentibacter_pneumotropicus
+NC_004917.1                    Helicobacter_hepaticus
