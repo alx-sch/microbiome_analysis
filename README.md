@@ -77,45 +77,11 @@ Paired-end FASTQ files are provided by the client.
  ```bash
  fastp -i F1_S4_R1.fastq.gz -I F1_S4_R2.fastq.gz -o F1_S4_TRIMMED_R1.fastq.gz -O F1_S4_TRIMMED_R2.fastq.gz -h F1_S4_fastp_report.html
 ```
-```bash
-Read1 before filtering:
-total reads: 2978791
-total bases: 226388116
-Q20 bases: 216315604(95.5508%)
-Q30 bases: 210590622(93.0219%)
+Result report [here](https://github.com/alx-sch/microbiome_analysis/tree/main/4_stats) in TRIMMED folders (HTML files).
 
-Read2 before filtering:
-total reads: 2978791
-total bases: 226388116
-Q20 bases: 215516137(95.1976%)
-Q30 bases: 209241179(92.4259%)
+- F1_S4:  The input has little adapter percentage (~0.075690%), probably it's trimmed before.
+- F11_S14: The input has little adapter percentage (~0.136754%), probably it's trimmed before.
 
-Read1 after filtering:
-total reads: 2913522
-total bases: 221245930
-Q20 bases: 212529911(96.0605%)
-Q30 bases: 207119003(93.6148%)
-
-Read2 after filtering:
-total reads: 2913522
-total bases: 221248887
-Q20 bases: 212639126(96.1086%)
-Q30 bases: 206787522(93.4638%)
-
-Filtering result:
-reads passed filter: 5827044
-reads failed due to low quality: 123130
-reads failed due to too many N: 284
-reads failed due to too short: 7124
-reads with adapter trimmed: 18330
-bases trimmed due to adapters: 346344
-
-Duplication rate: 42.7525%
-
-Insert size peak (evaluated by paired-end reads): 0
-
-JSON report: fastp.json
-HTML report: trimming_report.json
 ```
 
 1. Before Filtering:  
@@ -456,24 +422,50 @@ echo -e "FASTQ QC for ${SAMPLE_NAME} done..."
 
  ## Results
 
+#### F1_S4
+
+No Trimming
 ```
-Total reads for subset_SRR26681942_1: 1116893 (100%)
+Total reads for F1_S4: 5957582 (100%)
 -----
-Mouse:			Mapped: 7789 (0,70%)	| Unmapped: 1109104 (99,30%)
-Pathogen in non-mouse:	Mapped: 23449 (2,10%)	| Unmapped: 1085655 (97,20%)
-Total:			Mapped: 31238 (2,80%)	| Unmapped: 1085655 (97,20%)
+Mouse:			Mapped: 152609 (2,56%)	| Unmapped: 5804973 (97,44%)
+Pathogen in non-mouse:	Mapped: 4739137 (79,55%)	| Unmapped: 1065836 (17,89%)
+Total:			Mapped: 4891746 (82,11%)	| Unmapped: 1065836 (17,89%)
 
 ###########
 
 Pathogen name		Mapped reads	(% pathogen | % non-mouse) 
 -----
-Enterococcus_faecalis		12557	(53,55%	| 1,16%)
-Helicobacter_hepaticus		2038	(8,69%	| 0,19%)
-Klebsiella_oxytoca		273	(1,16%	| 0,03%)
-Rodentibacter_heylii		188	(0,80%	| 0,02%)
-Rodentibacter_p.		213	(0,91%	| 0,02%)
-Staphylococcus_aureus		8455	(36,06%	| 0,78%)
+Enterococcus_faecalis		811	(0,02%	| 0,01%)
+Helicobacter_hepaticus		81	(0,00%	| 0,00%)
+Klebsiella_oxytoca		2355	(0,05%	| 0,04%)
+Rodentibacter_heylii		54258	(1,14%	| 0,93%)
+Rodentibacter_pneumotropicus		4681031	(98,77%	| 80,64%)
+Staphylococcus_aureus		648	(0,01%	| 0,01%)
 *		0	(0,00%	| 0,00%)
 ```
+Trimmed
+```
+Total reads for F1_S4_TRIMMED: 5827044 (100%)
+-----
+Mouse:			Mapped: 131518 (2,26%)	| Unmapped: 5695526 (97,74%)
+Pathogen in non-mouse:	Mapped: 4685620 (80,41%)	| Unmapped: 1009906 (17,33%)
+Total:			Mapped: 4817138 (82,67%)	| Unmapped: 1009906 (17,33%)
+
+###########
+
+Pathogen name		Mapped reads	(% pathogen | % non-mouse) 
+-----
+Enterococcus_faecalis		810	(0,02%	| 0,01%)
+Helicobacter_hepaticus		81	(0,00%	| 0,00%)
+Klebsiella_oxytoca		2294	(0,05%	| 0,04%)
+Rodentibacter_heylii		53616	(1,14%	| 0,94%)
+Rodentibacter_pneumotropicus		4628239	(98,78%	| 81,26%)
+Staphylococcus_aureus		627	(0,01%	| 0,01%)
+*		0	(0,00%	| 0,00%)
+```
+
+
+
 
 - Depending on the experimental setup, skipping alignment against the mouse genome could significantly reduce processing time (it took ~80 min with around 1.1 M reads). The exclusion of this step doesn't result in a substantial increase in host-derived reads, accounting for only about 1% of the total reads in SRR26681942.
