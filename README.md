@@ -70,6 +70,76 @@ Paired-end FASTQ files are provided by the client.
       - `seqtk sample -s 42 SRR26681942_2.fastq 0.05 > subset_SRR26681942_2.fastq`
       - '42' is a seed value (making random sampling reproducale), new subsets contain 5% of total reads.~~
 
+## Trimming / Filtering
+
+#### F1_S4
+
+ ```bash
+ fastp -i F1_S4_R1.fastq.gz -I F1_S4_R2.fastq.gz -o TRIMMED_F1_S4_R1.fastq.gz -O TRIMMED_F1_S4_R2.fastq.gz -h trimming_report.json
+```
+```bash
+Read1 before filtering:
+total reads: 2978791
+total bases: 226388116
+Q20 bases: 216315604(95.5508%)
+Q30 bases: 210590622(93.0219%)
+
+Read2 before filtering:
+total reads: 2978791
+total bases: 226388116
+Q20 bases: 215516137(95.1976%)
+Q30 bases: 209241179(92.4259%)
+
+Read1 after filtering:
+total reads: 2913522
+total bases: 221245930
+Q20 bases: 212529911(96.0605%)
+Q30 bases: 207119003(93.6148%)
+
+Read2 after filtering:
+total reads: 2913522
+total bases: 221248887
+Q20 bases: 212639126(96.1086%)
+Q30 bases: 206787522(93.4638%)
+
+Filtering result:
+reads passed filter: 5827044
+reads failed due to low quality: 123130
+reads failed due to too many N: 284
+reads failed due to too short: 7124
+reads with adapter trimmed: 18330
+bases trimmed due to adapters: 346344
+
+Duplication rate: 42.7525%
+
+Insert size peak (evaluated by paired-end reads): 0
+
+JSON report: fastp.json
+HTML report: trimming_report.json
+```
+
+1. Before Filtering:  
+	- Total reads: 2,978,791 for both Read1 and Read2.
+	- Total bases: Approximately 226 million bases for both Read1 and Read2.
+	- High-quality bases: Over 95% of bases have a quality score of at least 20 (Q20), and over 92% have a quality score of at least 30 (Q30).
+
+2. After Filtering:  
+	- Total reads: 2,913,522 for both Read1 and Read2.
+	- Total bases: Approximately 221 million bases for both Read1 and Read2.
+	- Quality improvement: The percentage of high-quality bases (Q20 and Q30) has increased after filtering, indicating improved data quality.
+
+3. Filtering Result:   
+	- Reads passed filter: 5,827,044 reads passed the filtering criteria.
+	- Failed reads: A small proportion of reads failed due to low quality, too many ambiguous bases (N), or being too short after filtering.
+	- Adapter trimming: 18,330 reads had adapter sequences detected and trimmed.
+	- Bases trimmed: A total of 346,344 bases were trimmed due to adapter sequences.
+
+4. Quality Metrics:
+	- Duplication rate: Approximately 42.75% of reads were identified as duplicates after filtering.
+	- Insert size peak: No distinct peak was detected for the estimated insert size based on paired-end reads.
+```
+
+
 ## Aligning Seq Data to Genomes
 
 #### Suggested Directory Structure
