@@ -137,8 +137,6 @@ HTML report: trimming_report.json
 4. Quality Metrics:
 	- Duplication rate: Approximately 42.75% of reads were identified as duplicates after filtering.
 	- Insert size peak: No distinct peak was detected for the estimated insert size based on paired-end reads.
-```
-
 
 ## Aligning Seq Data to Genomes
 
