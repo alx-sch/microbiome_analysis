@@ -444,7 +444,7 @@ Rodentibacter_pneumotropicus		4681031	(98,77%	| 80,64%)
 Staphylococcus_aureus		648	(0,01%	| 0,01%)
 *		0	(0,00%	| 0,00%)
 ```
-Trimmed
+Trimmed:
 ```
 Total reads for F1_S4_TRIMMED: 5827044 (100%)
 -----
@@ -465,6 +465,61 @@ Staphylococcus_aureus		627	(0,01%	| 0,01%)
 *		0	(0,00%	| 0,00%)
 ```
 
+No Trimming:
+<img width="1205" alt="Screenshot 2024-02-29 at 16 46 54" src="https://github.com/alx-sch/microbiome_analysis/assets/134595144/5c515efc-1750-4346-ae97-2410142746c1">
+
+Trimmed:
+<img width="1220" alt="Screenshot 2024-02-29 at 16 47 39" src="https://github.com/alx-sch/microbiome_analysis/assets/134595144/35b4de9e-7415-4cdd-bb3a-d89cb3f814de">
+
+#### F11_S14
+
+No Trimming:
+```
+Total reads for F11_S14: 5661678 (100%)
+-----
+Mouse:			Mapped: 385450 (6,81%)	| Unmapped: 5276228 (93,19%)
+Pathogen in non-mouse:	Mapped: 19516 (0,34%)	| Unmapped: 5256712 (92,85%)
+Total:			Mapped: 404966 (7,15%)	| Unmapped: 5256712 (92,85%)
+
+###########
+
+Pathogen name		Mapped reads	(% pathogen | % non-mouse) 
+-----
+Enterococcus_faecalis		3134	(16,06%	| 0,06%)
+Helicobacter_hepaticus		542	(2,78%	| 0,01%)
+Klebsiella_oxytoca		4473	(22,92%	| 0,08%)
+Rodentibacter_heylii		1109	(5,68%	| 0,02%)
+Rodentibacter_pneumotropicus		1001	(5,13%	| 0,02%)
+Staphylococcus_aureus		9259	(47,44%	| 0,18%)
+*		0	(0,00%	| 0,00%)
+```
+
+Trimmed:
+```
+Total reads for F11_S14_TRIMMED: 5499580 (100%)
+-----
+Mouse:			Mapped: 364859 (6,63%)	| Unmapped: 5134721 (93,37%)
+Pathogen in non-mouse:	Mapped: 19283 (0,35%)	| Unmapped: 5115438 (93,02%)
+Total:			Mapped: 384142 (6,98%)	| Unmapped: 5115438 (93,02%)
+
+###########
+
+Pathogen name		Mapped reads	(% pathogen | % non-mouse) 
+-----
+Enterococcus_faecalis		3077	(15,96%	| 0,06%)
+Helicobacter_hepaticus		540	(2,80%	| 0,01%)
+Klebsiella_oxytoca		4402	(22,83%	| 0,09%)
+Rodentibacter_heylii		1077	(5,59%	| 0,02%)
+Rodentibacter_pneumotropicus		1023	(5,31%	| 0,02%)
+Staphylococcus_aureus		9165	(47,53%	| 0,18%)
+*		0	(0,00%	| 0,00%)
+```
+
+No Trimming:
+<img width="1220" alt="Screenshot 2024-02-29 at 16 51 14" src="https://github.com/alx-sch/microbiome_analysis/assets/134595144/818e8305-34e4-499d-afc3-aed3a05d5fea">
+
+Trimmed:
+<img width="1214" alt="Screenshot 2024-02-29 at 16 50 05" src="https://github.com/alx-sch/microbiome_analysis/assets/134595144/734818d9-6890-432f-8e91-71305fbdb9dd">
 
 
 
