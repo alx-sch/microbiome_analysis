@@ -65,7 +65,7 @@ Paired-end FASTQ files are provided by the client.
       AAAAAEEEEEEEEEEEEEEEEEEEAEEAEEEEEEEEEEEEEEEEE
       ```
 
-  ~~-  Generating subsets of ~1M reads each using 'seqtk':
+  ~~-  Generating subsets of ~1M reads each using 'seqtk':~~
       - `seqtk sample -s 42 SRR26681942_1.fastq 0.05 > subset_SRR26681942_1.fastq`
       - `seqtk sample -s 42 SRR26681942_2.fastq 0.05 > subset_SRR26681942_2.fastq`
       - '42' is a seed value (making random sampling reproducale), new subsets contain 5% of total reads.~~
