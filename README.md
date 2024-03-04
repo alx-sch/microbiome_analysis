@@ -82,8 +82,6 @@ Result report [here](https://github.com/alx-sch/microbiome_analysis/tree/main/4_
 - F1_S4:  The input has little adapter percentage (~0.075690%), probably it's trimmed before.
 - F11_S14: The input has little adapter percentage (~0.136754%), probably it's trimmed before.
 
-```
-
 1. Before Filtering:  
 	- Total reads: 2,978,791 for both Read1 and Read2.
 	- Total bases: Approximately 226 million bases for both Read1 and Read2.
@@ -131,6 +129,9 @@ Result report [here](https://github.com/alx-sch/microbiome_analysis/tree/main/4_
        	  -    F1_S4_R1.fastq.gz
        	  -    F1_S4_R2.fastq.gz
        	  -    ...
+
+#### Show number of read-pairs:
+`samtools view -f 2 "$output_folder/${exp}_pathogen_mapped.bam" | awk '{print $1}' | sort -u | wc -l`
  
 #### Pipeline
 - **Mapping:** Maps genomic sequence identifiers (at times several per pathogen) to pathogen names.
