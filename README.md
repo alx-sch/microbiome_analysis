@@ -166,7 +166,7 @@ run.sh (paired-end reads):
 ```bash
 #!/bin/bash
 
-exp="F1_S4"
+exp="P11_S25"
 
 R1="${exp}_R1"
 R2="${exp}_R2"
@@ -192,12 +192,18 @@ bash utils/quack_qc.sh ${exp}
 
 # Align against the mouse genome
 echo -e "-----\n${exp} / Step 1: Aligning reads against the mouse genome...\n-----"
-bwa mem -t 4 "$mouse_index" "$input_reads1" "$input_reads2" | samtools view -b -f 4 -U "$output_folder/${exp}_mouse_mapped.bam" - > "$output_folder/${exp}_mouse_unmapped.bam"
+bwa mem -t 4 "$mouse_index" "$input_reads1" "$input_reads2" | samtools view -b -f 2 -F 2304 -U "$output_folder/${exp}_mouse_unmapped.bam" - > "$output_folder/${exp}_mouse_mapped.bam"
 echo -e "-----\nStep 1 completed.\n-----"
 
 # Align unmapped-to-mouse reads against pathogens
 echo -e "-----\n${exp} / Step 2: Aligning unmapped-to-mouse reads against pathogens...\n-----"
-samtools fastq -n -0 - "$output_folder/${exp}_mouse_unmapped.bam" | bwa mem -t 4 "$pathogen_index" - | samtools view -b -f 4 -U "$output_folder/${exp}_pathogen_mapped.bam" - > "$output_folder/${exp}_pathogen_unmapped.bam"
+# Create R1 and R2 FASTQ files out of mouse_unmapped.bam
+samtools fastq -@ 4 -1 R1.fastq -2 R2.fastq "$output_folder/${exp}_mouse_unmapped.bam"
+
+bwa mem -t 4 "$pathogen_index" R1.fastq R2.fastq | samtools view -b -f 2 -F 2304 -U "$output_folder/${exp}_pathogen_unmapped.bam" - > "$output_folder/${exp}_pathogen_mapped.bam"
+
+rm R1.fastq R2.fastq
+
 echo -e "-----\nStep 2 completed.\n-----"
 
 # Sorting mapped pathogen reads and indexing
@@ -215,15 +221,15 @@ samtools idxstats "$output_folder/${exp}_pathogen_mapped_sorted.bam" > "$stats_f
 
 ### Get number of reads
 # Get number of reads (not) mapped to mouse (excl. supplementary (flag 2048) and secondary mapped reads (flag 256)).
-reads_mouse_mapped=$(samtools view -c -F 2304 "$output_folder/${exp}_mouse_mapped.bam")
-reads_mouse_unmapped=$(samtools view -c "$output_folder/${exp}_mouse_unmapped.bam")
+reads_mouse_mapped=$(samtools view -c "$output_folder/${exp}_mouse_mapped.bam")
+reads_mouse_unmapped=$(samtools view -c -F 2304 "$output_folder/${exp}_mouse_unmapped.bam")
 
 # Calculate total reads
 reads_total=$(( $reads_mouse_mapped + $reads_mouse_unmapped ))
 
 # Get number of non-mouse reads (not) mapped to pathogens (excl. supplementary (flag 2048) and secondary mapped reads (flag 256)).
-reads_pathogen_mapped=$(samtools view -c -F 2304 "$output_folder/${exp}_pathogen_mapped.bam")
-reads_pathogen_unmapped=$(samtools view -c "$output_folder/${exp}_pathogen_unmapped.bam")
+reads_pathogen_mapped=$(samtools view -c "$output_folder/${exp}_pathogen_mapped.bam")
+reads_pathogen_unmapped=$(samtools view -c -F 2304 "$output_folder/${exp}_pathogen_unmapped.bam")
 
 # Mouse and pathogens
 reads_total_mapped=$((reads_mouse_mapped + reads_pathogen_mapped))
@@ -279,22 +285,8 @@ for pathogen in "${pathogen_sorted[@]}"; do
     percentage_mapped=$(awk "BEGIN {printf \"%.2f\", (${pathogen_reads[$pathogen]}/$reads_pathogen_mapped)*100}")
     percentage_unmapped=$(awk "BEGIN {printf \"%.2f\", (${pathogen_reads[$pathogen]}/$reads_mouse_unmapped)*100}")
     echo -e "$pathogen\t\t${pathogen_reads[$pathogen]}\t(${percentage_mapped}%\t| ${percentage_unmapped}%)" >> "$stats_folder/${exp}_summary.txt"
+ 
 done
-```
-```
-[M::bwa_idx_load_from_disk] read 0 ALT contigs
-[M::process] read 526316 sequences (40000016 bp)...
-[M::process] read 526316 sequences (40000016 bp)...
-[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 273, 0, 0)
-[M::mem_pestat] skip orientation FF as there are not enough pairs
-[M::mem_pestat] analyzing insert size distribution for orientation FR...
-[M::mem_pestat] (25, 50, 75) percentile: (147, 202, 266)
-[M::mem_pestat] low and high boundaries for computing mean and std.dev: (1, 504)
-[M::mem_pestat] mean and std.dev: (207.31, 101.05)
-[M::mem_pestat] low and high boundaries for proper pairs: (1, 623)
-[M::mem_pestat] skip orientation RF as there are not enough pairs
-[M::mem_pestat] skip orientation RR as there are not enough pairs
-[M::mem_process_seqs] Processed 526316 reads in 1906.658 CPU sec, 548.703 real sec
 ```
 
 ## Tools
