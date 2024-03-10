@@ -1,0 +1,17 @@
+Total reads for P11_S25: 12929530 (100%)
+-----
+Mouse:			Mapped: 588818 (4,55%)	| Unmapped: 12340712 (95,45%)
+Pathogen in non-mouse:	Mapped: 0 (0,00%)	| Unmapped: 12340712 (95,45%)
+Total:			Mapped: 588818 (4,55%)	| Unmapped: 12340712 (95,45%)
+
+###########
+
+Pathogen name		Mapped reads	(% pathogen | % non-mouse) 
+-----
+Enterococcus_faecalis		0	(-nan%	| 0,00%)
+Helicobacter_hepaticus		0	(-nan%	| 0,00%)
+Klebsiella_oxytoca		0	(-nan%	| 0,00%)
+Rodentibacter_heylii		0	(-nan%	| 0,00%)
+Rodentibacter_pneumotropicus		0	(-nan%	| 0,00%)
+Staphylococcus_aureus		0	(-nan%	| 0,00%)
+*		0	(-nan%	| 0,00%)
