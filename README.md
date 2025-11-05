@@ -459,10 +459,10 @@ Staphylococcus_aureus		627	(0,01%	| 0,01%)
 ```
 
 No Trimming:
-<img width="1205" alt="Screenshot 2024-02-29 at 16 46 54" src="https://github.com/alx-sch/microbiome_analysis/assets/134595144/5c515efc-1750-4346-ae97-2410142746c1">
+<img width="1220" alt="F1_S4.png" src="https://raw.githubusercontent.com/alx-sch/microbiome_analysis/refs/heads/main/.assets/F1_S4.png">
 
 Trimmed:
-<img width="1220" alt="Screenshot 2024-02-29 at 16 47 39" src="https://github.com/alx-sch/microbiome_analysis/assets/134595144/35b4de9e-7415-4cdd-bb3a-d89cb3f814de">
+<img width="1220" alt="F1_S4_TRIMMED.png" src="https://raw.githubusercontent.com/alx-sch/microbiome_analysis/refs/heads/main/.assets/F1_S4_TRIMMED.png">
 
 #### F11_S14
 
@@ -509,10 +509,10 @@ Staphylococcus_aureus		9165	(47,53%	| 0,18%)
 ```
 
 No Trimming:
-<img width="1220" alt="Screenshot 2024-02-29 at 16 51 14" src="https://github.com/alx-sch/microbiome_analysis/assets/134595144/818e8305-34e4-499d-afc3-aed3a05d5fea">
+<img width="1220" alt="F11_S14.png" src="https://raw.githubusercontent.com/alx-sch/microbiome_analysis/refs/heads/main/.assets/F11_S14.png">
 
 Trimmed:
-<img width="1214" alt="Screenshot 2024-02-29 at 16 50 05" src="https://github.com/alx-sch/microbiome_analysis/assets/134595144/734818d9-6890-432f-8e91-71305fbdb9dd">
+<img width="1220" alt="F11_S14_TRIMMED.png" src="https://raw.githubusercontent.com/alx-sch/microbiome_analysis/refs/heads/main/.assets/F11_S14_TRIMMED.png">
 
 
 
