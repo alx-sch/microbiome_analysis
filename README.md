@@ -77,7 +77,7 @@ Paired-end FASTQ files are provided by the client.
  ```bash
  fastp -i F1_S4_R1.fastq.gz -I F1_S4_R2.fastq.gz -o F1_S4_TRIMMED_R1.fastq.gz -O F1_S4_TRIMMED_R2.fastq.gz -h F1_S4_fastp_report.html
 ```
-Result report [here](https://github.com/alx-sch/microbiome_analysis/tree/main/4_stats) in TRIMMED folders (HTML files).
+Result report [here](/Results) in TRIMMED folders (HTML files).
 
 - F1_S4:  The input has little adapter percentage (~0.075690%), probably it's trimmed before.
 - F11_S14: The input has little adapter percentage (~0.136754%), probably it's trimmed before.
@@ -135,7 +135,7 @@ Result report [here](https://github.com/alx-sch/microbiome_analysis/tree/main/4_
  
 #### Pipeline
 - **Mapping:** Maps genomic sequence identifiers (at times several per pathogen) to pathogen names.
-- **FASTQ QC:** Performs quality assurance utilizing [quack]((https://github.com/IGBB/quack).
+- **FASTQ QC:** Performs quality assurance utilizing [quack](https://github.com/IGBB/quack).
 - **Reporting:** Generates a summary report on host/pathogen mapped/unmapped reads.
 
 The script iterates over a set of FASTQ files, aligns them to the mouse genome, filters unmapped reads, converts them to FASTQ format, aligns them to a combined pathogen index, and performs various post-processing steps. Finally, it calculates and reports statistics on the alignment results, such as the percentage of reads mapped to the mouse genome, pathogens, and those not mapped to either. The results and statistics are saved in the specified output and stats folders.
@@ -459,10 +459,10 @@ Staphylococcus_aureus		627	(0,01%	| 0,01%)
 ```
 
 No Trimming:
-<img width="1220" alt="F1_S4.png" src="https://raw.githubusercontent.com/alx-sch/microbiome_analysis/refs/heads/main/.assets/F1_S4.png">
+<img width="1220" alt="F1_S4.png" src=".assets/F1_S4.png">
 
 Trimmed:
-<img width="1220" alt="F1_S4_TRIMMED.png" src="https://raw.githubusercontent.com/alx-sch/microbiome_analysis/refs/heads/main/.assets/F1_S4_TRIMMED.png">
+<img width="1220" alt="F1_S4_TRIMMED.png" src=".assets/F1_S4_TRIMMED.png">
 
 #### F11_S14
 
@@ -509,10 +509,10 @@ Staphylococcus_aureus		9165	(47,53%	| 0,18%)
 ```
 
 No Trimming:
-<img width="1220" alt="F11_S14.png" src="https://raw.githubusercontent.com/alx-sch/microbiome_analysis/refs/heads/main/.assets/F11_S14.png">
+<img width="1220" alt="F11_S14.png" src=".assets/F11_S14.png">
 
 Trimmed:
-<img width="1220" alt="F11_S14_TRIMMED.png" src="https://raw.githubusercontent.com/alx-sch/microbiome_analysis/refs/heads/main/.assets/F11_S14_TRIMMED.png">
+<img width="1220" alt="F11_S14_TRIMMED.png" src=".assets/F11_S14_TRIMMED.png">
 
 
 
