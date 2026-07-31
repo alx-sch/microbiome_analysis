@@ -1,4 +1,4 @@
-# micro
+# Detecting Pathogen DNA in Sequencing Data
 
 A bioinformatics pipeline for detecting pathogen DNA in paired-end sequencing data from a mouse facility at a research hospital. Reads are aligned against a host (mouse) genome to filter host-derived sequences, then unmapped reads are aligned against a combined pathogen reference index to identify and quantify microbial contamination.
 
@@ -51,34 +51,34 @@ AAAAAEEEEEEEEEEEEEEEEEEEAEEAEEEEEEEEEEEEEEEEE
          │
          ▼
 ┌─────────────────────┐
-│  Quality Control     │
-│  (fastp / quack)     │
+│  Quality Control    │
+│  (fastp / quack)    │
 └────────┬────────────┘
          │
          ▼
 ┌─────────────────────┐
-│  Align to Mouse      │     ┌──────────────────┐
-│  Genome (bwa mem)    │────▶│  Mouse-mapped    │
-└────────┬────────────┘     │  reads (discard)  │
-         │                    └──────────────────┘
+│  Align to Mouse     │     ┌──────────────────┐
+│  Genome (bwa mem)   │────▶│  Mouse-mapped    │
+└────────┬────────────┘     │  reads (discard) │
+         │                  └──────────────────┘
          │ unmapped
          ▼
 ┌─────────────────────┐
-│  Align to Pathogen   │     ┌──────────────────┐
-│  Index (bwa mem)     │────▶│  Unmapped reads  │
-└────────┬────────────┘     │  (unidentified)   │
-         │                    └──────────────────┘
+│  Align to Pathogen  │     ┌──────────────────┐
+│  Index (bwa mem)    │────▶│  Unmapped reads  │
+└────────┬────────────┘     │  (unidentified)  │
+         │                  └──────────────────┘
          │ mapped
          ▼
 ┌─────────────────────┐
-│  Sort, Index, Stats  │
-│  (samtools)          │
+│  Sort, Index, Stats │
+│  (samtools)         │
 └────────┬────────────┘
          │
          ▼
 ┌─────────────────────┐
-│  Summary Report      │
-│  (per pathogen)      │
+│  Summary Report     │
+│  (per pathogen)     │
 └─────────────────────┘
 ```
 
